@@ -39,7 +39,7 @@ create table Proposal
     Researcher_ID int(8),
     Program_ID int(10),
     primary key(Proposal_ID),
-    foreign key (Researcher_ID) references Researcher (Researcher_ID),
+    foreign key (Researcher_ID) references Researcher (Researcher_ID) on delete cascade,
     foreign key (Program_ID) references NSF_Program (Program_ID)
 
 );
@@ -50,7 +50,7 @@ create table Peer_Reviewers
     Peer_Reviewer_Name varchar(25) not null,
     Proposal_ID int(10),
     primary key (Peer_Reviewer_ID),
-    foreign key (Proposal_ID) references Proposal (Proposal_ID)
+    foreign key (Proposal_ID) references Proposal (Proposal_ID) on delete cascade
 );
 
 create table Evaluation 
@@ -61,9 +61,12 @@ create table Evaluation
     Directorate_ID int(8),
     Evaluation_Details varchar(100),
     primary key (Evaluation_ID, Proposal_ID, Peer_Reviewer_ID, Directorate_ID),
-    foreign key (Proposal_ID) references Proposal(Program_ID),
-    foreign key (Peer_Reviewer_ID) references Peer_Reviewers(Peer_Reviewer_ID),
+    foreign key (Proposal_ID) references Proposal(Program_ID)
+    on delete cascade,
+    foreign key (Peer_Reviewer_ID) references Peer_Reviewers(Peer_Reviewer_ID), 
+    on delete casecade,
     foreign key (Directorate_ID) references Directorate(Directorate_ID)
+    on delete set null
 );
 
 create table Approval
@@ -74,8 +77,10 @@ create table Approval
     Dates varchar (8),
     time_slot_id varchar(4),
     primary key (Approval_ID, Directorate_ID, Evaluation_ID),
-    foreign key (Directorate_ID) references Directorate(Directorate_ID),
+    foreign key (Directorate_ID) references Directorate(Directorate_ID)
+    on delete set cascade,
     foreign key (Evaluation_ID) references Evaluation(Evaluation_ID)
+    on delete cascade
 );
 
 create table NSF_Grants
@@ -85,6 +90,7 @@ create table NSF_Grants
     University_ID int(6),
     primary key (Grant_ID), 
     foreign key (University_ID) references University(University_ID)
+    on delete cascade
 );
 
 create table Managers_NSF
@@ -95,9 +101,12 @@ create table Managers_NSF
     Approval_ID int(8),
     Grant_ID int (8),
     Primary key (Managers_ID, University_ID, Approval_ID, Grant_ID),
-    foreign key (University_ID) references University(University_ID),
-    foreign key (Approval_ID) references Approval(Approval_ID),
+    foreign key (University_ID) references University(University_ID)
+    on delete cascade,
+    foreign key (Approval_ID) references Approval(Approval_ID)
+    on delete cascade,
     foreign key (Grant_ID) references NSF_Grants (Grant_ID)
+    on delete cascade
 );
 
 create table Principle Investigator
@@ -109,6 +118,8 @@ create table Principle Investigator
     Grant_ID int(8),
     University_ID int (6),
     Primary Key (PI_ID, Grant_ID, University_ID),
-    foreign key (Grant_ID) references NSF_Grants(Grant_ID),
-    foreigh key (University_ID) references University (University_ID)
+    foreign key (Grant_ID) references NSF_Grants(Grant_ID)
+    on delete cascade,
+    foreign key (University_ID) references University (University_ID)
+    on delete set null
 );
